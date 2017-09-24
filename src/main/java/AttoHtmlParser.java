@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by myuser on 9/19/17.
  */
 
-    public class TagSoup {
+    public class AttoHtmlParser {
     public static void main(String args[]) throws Exception {
 
             File input = new File("/home/myuser/Downloads/tuik_data/12-09-2017-00:08:35-16881753099321297021824160991.html");//disticaret2009-13_files.html");

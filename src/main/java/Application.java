@@ -3,6 +3,9 @@ import java.io.*;
 import java.net.URL;
 import org.jsoup.*;
 
+/**
+ * This class uses jsoup library.
+ */
 public class Application {
     public static void main(String[] args) throws IOException {
         File input = new File("/home/myuser/Downloads/tuik_data/disticaret2009-13_files.html");
