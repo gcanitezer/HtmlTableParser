@@ -18,8 +18,10 @@ public class StreamedSourceCopy {
             writer=new OutputStreamWriter(new FileOutputStream("StreamedSourceCopyOutput.html"),streamedSource.getEncoding());
             System.out.println("Processing segments:");
             int lastSegmentEnd=0;
+            StringBuilder innerContent=new StringBuilder();
+            boolean insideParagraphElement=false;
             for (Segment segment : streamedSource) {
-                System.out.println(segment.getDebugInfo());
+               // System.out.println(segment.getDebugInfo());
                 if (segment.getEnd()<=lastSegmentEnd) continue; // if this tag is inside the previous tag (e.g. a server tag) then ignore it as it was already output along with the previous tag.
                 lastSegmentEnd=segment.getEnd();
                 if (segment instanceof Tag) {
@@ -28,20 +30,34 @@ public class StreamedSourceCopy {
                     if(name.equals(HTMLElementName.TABLE)) {
                         System.out.println("table");
                     }else if(name.equals(HTMLElementName.TR)){
-                        System.out.print("TR: |");
+                        if (tag instanceof StartTag) {
+                            System.out.print("\nTR: |");
+                        }
                     }else if(name.equals(HTMLElementName.TD)){
-                        System.out.print(" | " );
+                        if (tag instanceof StartTag) {
+                            insideParagraphElement=true;
+                            innerContent.setLength(0);
+                            String colspan = ((StartTag) tag).getAttributeValue("colspan");
+                            colspan = (colspan == null)? "1":colspan;
+                            for(int i=0;i<Integer.parseInt(colspan);i++)
+                                System.out.print(" | " );
+                        } else { // tag instanceof EndTag
+                            insideParagraphElement=false;
+                            System.out.print(innerContent.toString());
+                        }
                     }
-                    // HANDLE TAG
-                    // Uncomment the following line to ensure each tag is valid XML:
-                    // writer.write(tag.tidy()); continue;
+
                 } else if (segment instanceof CharacterReference) {
                     CharacterReference characterReference=(CharacterReference)segment;
-                    // HANDLE CHARACTER REFERENCE
-                    // Uncomment the following line to decode all character references instead of copying them verbatim:
-                    // characterReference.appendCharTo(writer); continue;
-                } else {
-                    // HANDLE PLAIN TEXT
+                    if (insideParagraphElement){
+                        characterReference.appendCharTo(innerContent);
+                    }
+
+                } else {// HANDLE PLAIN TEXT
+                    if (insideParagraphElement){
+                        innerContent.append(segment);
+                    }
+
                 }
                 // unless specific handling has prevented getting to here, simply output the segment as is:
                 //writer.write(segment.toString());
