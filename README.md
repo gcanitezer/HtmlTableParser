@@ -11,3 +11,10 @@ Target format to parse is similar to the following
 | | | v3 |
 | | Total | t3|
 | | v2 | v3 |
+
+
+#Dom Parser
+Dom Parsing by using jsoup is working but it cannot handle big html files. 
+
+#Sax Parser
+In order to handle big files [Atto Parser](http://www.attoparser.org/apidocs/attoparser/2.0.4.RELEASE/) will be used.
